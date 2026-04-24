@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Estoque</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Gestão de Produtos</h1>
+
+    <button class="btn-main" onclick="buscarProdutos()">Carregar Meu Estoque</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Preço</th>
+                <th>Quantidade</th>
+                <th style="width: 80px;"></th>
+                <th style="width: 80px;"></th>
+            </tr>
+        </thead>
+        <tbody id="lista-produtos"></tbody>
+    </table>
+
+    <div class="cadastro-container">
+        <h3>Novo Produto</h3>
+        <div class="input-group">
+            <input type="text" id="nome" placeholder="Nome do Produto">
+            <input type="number" id="preco" placeholder="Preço">
+            <input type="number" id="quantidade" placeholder="Quantidade">
+            <button class="btn-add" onclick="adicionarProduto()">Adicionar Produto</button>
+        </div>
+    </div>
+
+    <div id="caixa" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-button" onclick="fecharModal()">&times;</button>
+            <h3>Editar Produto</h3>
+            
+            <p class="modal-text">Nome:</p>
+            <input type="text" id="edit-nome" placeholder="Nome do Produto">
+            <p class="modal-text">Preço:</p>
+            <input type="number" id="edit-preco" placeholder="Preço">
+            <p class="modal-text">Quantidade:</p>
+            <input type="number" id="edit-quantidade" placeholder="Quantidade">
+            <button class="btn-edit" onclick="editarProduto()">Editar Produto</button>
+        </div>
+    </div>
+
+    <script>
+        let estoque = [];
+        let produtoIdEmEdicao = null;
+
+        window.onload = () => {
+            buscarProdutos();
+        };
+
+        async function adicionarProduto() {
+            try {
+                valorNome = document.getElementById("nome").value;
+                valorPreco = document.getElementById("preco").value;
+                valorQuantidade = document.getElementById("quantidade").value;
+
+                const produto = {
+                    nome: valorNome,
+                    preco: valorPreco,
+                    quantidade: valorQuantidade
+                }
+
+                const resposta = await fetch('http://localhost:8080/produtos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(produto)
+                })
+
+                if(!resposta.ok){
+                    let dadosErro;
+                    try {
+                        dadosErro = await resposta.json();
+                    } catch {
+                        dadosErro = { message: await resposta.text() };
+                    }
+                    alert("Erro: " + dadosErro.message);
+                    return;
+                }
+
+                document.getElementById("nome").value = "";
+                document.getElementById("preco").value = "";
+                document.getElementById("quantidade").value = "";
+
+                buscarProdutos();
+            } catch(erro) {
+                alert(erro)
+            }
+        }
+
+        async function editarProdutoModal(id) {
+            const produto = estoque.find(p => p.id === id);
+
+            produtoIdEmEdicao = id;
+
+            document.getElementById("edit-nome").value = produto.nome;
+            document.getElementById("edit-preco").value = produto.preco;
+            document.getElementById("edit-quantidade").value = produto.quantidade
+
+            const modal = document.getElementById("caixa");
+            modal.style.display = "flex";
+        }
+
+        async function fecharModal() {
+            const modal = document.getElementById("caixa");
+            modal.style.display = "none";
+        }
+
+        async function editarProduto() {
+            const novoNome = document.getElementById("edit-nome").value;
+            const novoPreco = document.getElementById("edit-preco").value;
+            const novaQuantidade = document.getElementById("edit-quantidade").value;
+
+            const produto = {
+                nome: novoNome,
+                preco: novoPreco,
+                quantidade: novaQuantidade
+            };
+            try {
+                await fetch(`http://localhost:8080/produtos/${produtoIdEmEdicao}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(produto)
+                });
+
+                produtoIdEmEdicao = null;
+                buscarProdutos();
+                fecharModal();
+            } catch (erro) {
+                console.error("Erro ao editar produto:", erro);
+            }
+        }
+        
+
+        async function buscarProdutos() {
+            try {
+                const resposta = await fetch('http://localhost:8080/produtos');
+                
+                const produto = await resposta.json();
+                estoque = produto;
+
+                const divLista = document.getElementById('lista-produtos');
+                divLista.innerHTML = '';
+
+                produto.forEach(produto => {
+                    divLista.innerHTML += `
+                        <tr class="produto-card">
+                            <td>${produto.nome}</td>
+                            <td>R$ ${produto.preco}</td>
+                            <td>${produto.quantidade}</td>
+                            <td class="edit-buttonbg"><button onClick="editarProdutoModal(${produto.id})" class="edit-button">Editar</button></td>
+                            <td class="remove-buttonbg"><button onclick="deletarProduto(${produto.id})" class="remove-button">Apagar</button></td>
+                        </tr>
+                    `;
+                });
+
+            } catch (erro) {
+                console.error("Erro ao conectar com a API:", erro);
+                alert("Não foi possível conectar. O Spring Boot está rodando?");
+            }
+        }
+
+        async function deletarProduto(id) {
+            if (!confirm("Tem certeza que deseja apagar?")) return;
+
+            try {
+                await fetch(`http://localhost:8080/produtos/${id}`, {
+                    method: 'DELETE'
+                });
+
+                alert("Produto apagado!");
+                buscarProdutos();
+            } catch (erro) {
+                alert("Erro ao apagar produto");
+            }
+        }
+    </script>
+</body>
+</html>
