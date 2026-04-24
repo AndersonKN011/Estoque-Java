@@ -35,4 +35,8 @@ Sistema simples de gerenciamento de produtos com API em Java (Spring Boot) e int
 - Backend: rodar o Spring Boot  
 - Frontend: abrir com Live Server  
 
+---
+
+## 📸 Interface
+
 <img width="1873" height="920" alt="image" src="https://github.com/user-attachments/assets/f5e5dc22-b6f2-4571-afae-bbbd481d63fd" />
