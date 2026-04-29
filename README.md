@@ -6,10 +6,12 @@ Sistema simples de gerenciamento de produtos com API em Java (Spring Boot) e int
 
 ## 🚀 Funcionalidades
 
-- Listar produtos  
+- Listar produtos
+- Mostrar valor total do Estoque
 - Adicionar produto  
 - Editar produto  
-- Remover produto  
+- Remover produto
+- Remover lista de produtos
 
 ---
 
