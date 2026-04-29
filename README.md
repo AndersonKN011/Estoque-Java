@@ -23,10 +23,12 @@ Sistema simples de gerenciamento de produtos com API em Java (Spring Boot) e int
 
 ## 🔌 Endpoints
 
-- `GET /produtos`  
+- `GET /produtos`
+- `GET /produtos/valor-total`
 - `POST /produtos`  
 - `PUT /produtos/{id}`  
-- `DELETE /produtos/{id}`  
+- `DELETE /produtos/{id}`
+- `DELETE /produtos/deletar-varios`
 
 ---
 
