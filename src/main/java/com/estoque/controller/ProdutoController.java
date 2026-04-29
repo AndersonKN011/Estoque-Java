@@ -2,6 +2,7 @@ package com.estoque.controller;
 
 import com.estoque.model.Produto;
 import com.estoque.repository.ProdutoRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,17 @@ public class ProdutoController {
     @GetMapping
     public List<Produto> listarTodos() {
         return repository.findAll();
+    }
+
+    @GetMapping("/valor-total")
+    public Double getValorTotal() {
+        return repository.calcularValorTotalEstoque();
+    }
+
+    @DeleteMapping("deletar-varios")
+    public ResponseEntity<Void> deletarVarios(@RequestBody List<Long> ids){
+        repository.deleteAllById(ids);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
