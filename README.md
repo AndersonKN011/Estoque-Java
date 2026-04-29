@@ -41,6 +41,13 @@ Sistema simples de gerenciamento de produtos com API em Java (Spring Boot) e int
 
 ---
 
-## 📸 Interface
+## 📱 Interfaces Disponíveis
+
+- **Web (Integrada):** Acessível em `localhost:8080` (build do React incluída).
+- **Mobile (Expo):** Disponível em um repositório separado: [Estoque-Mobile](https://github.com/AndersonKN011/Estoque-Mobile).
+
+---
+
+## 📸 Imagem
 
 <img width="1873" height="920" alt="image" src="https://github.com/user-attachments/assets/f5e5dc22-b6f2-4571-afae-bbbd481d63fd" />
